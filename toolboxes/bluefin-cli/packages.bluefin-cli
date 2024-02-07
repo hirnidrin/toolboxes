@@ -1,7 +1,12 @@
+atuin
 brew
-cosign
+gawk
 eza
-git
-skopeo
+fd
+fish
+fzf
+ripgrep
+sed
 starship
 sudo-rs
+zoxide
