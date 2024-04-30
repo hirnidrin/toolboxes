@@ -11,6 +11,7 @@ c-ares
 ca-certificates-bundle
 gcc
 gdbm
+gh
 git
 glibc
 glibc-dev

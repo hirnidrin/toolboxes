@@ -21,6 +21,8 @@ libxext
 libice
 libxmu
 libxt
+linux-pam
+man-db
 mount
 ncurses
 ncurses-terminfo
@@ -30,6 +32,7 @@ pigz
 posix-libc-utils
 procps
 rsync
+shadow
 su-exec
 tcpdump
 tree

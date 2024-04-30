@@ -5,8 +5,10 @@ eza
 fd
 fish
 fzf
+rclone
 ripgrep
 sed
 starship
-sudo-rs
+uutils
 zoxide
+zsh
