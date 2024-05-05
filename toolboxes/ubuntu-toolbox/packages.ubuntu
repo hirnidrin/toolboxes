@@ -12,7 +12,6 @@ dirmngr
 findutils
 fish
 fzf
-gh
 gnupg
 gnupg2
 gnupg-l10n
@@ -114,7 +113,6 @@ tzdata
 unzip
 util-linux
 wget
-wine
 xauth
 xz-utils
 zip

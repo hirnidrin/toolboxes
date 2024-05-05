@@ -1,0 +1,18 @@
+FROM ghcr.io/ublue-os/ubuntu-toolbox
+
+LABEL com.github.containers.toolbox="true" \
+    name="mybuntu-toolbox" \
+    usage="This image is meant to be used with the Toolbox or Distrobox commands" \
+    summary="The original ublue-os ubuntu-toolbox, with minor additions." \
+    maintainer=""
+
+# Get list of additional packages to add
+COPY ./toolboxes/mybuntu-toolbox/packages.mybuntu /toolbox-packages
+
+# Add additional packages
+RUN apt-get update && \
+    yes | /usr/local/sbin/unminimize && \
+    DEBIAN_FRONTEND=noninteractive apt-get -y install \
+    $(cat toolbox-packages | xargs) && \
+    rm -rd /var/lib/apt/lists/* && \
+    rm /toolbox-packages

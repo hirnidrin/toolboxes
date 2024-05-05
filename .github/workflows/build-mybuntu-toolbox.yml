@@ -1,7 +1,7 @@
-name: Build and Push Ubuntu Toolbox Image
+name: Build and Push Mybuntu Toolbox Image
 on:
   schedule:
-    - cron: '20 7 * * *'  # 7:20 every day
+    - cron: '20 7 * * *'  # 7:20 every day - the ublue-os ubuntu-toolbox (which we build on) builds at 22:20
   push:
     branches:
       - main
@@ -9,7 +9,7 @@ on:
       - '**.md'
   workflow_dispatch:
 env:
-    IMAGE_NAME: ubuntu-toolbox
+    IMAGE_NAME: mybuntu-toolbox
     IMAGE_TAGS: latest
     IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
 
@@ -55,7 +55,7 @@ jobs:
         uses: redhat-actions/buildah-build@v2
         with:
           containerfiles: |
-            ./toolboxes/ubuntu-toolbox/Containerfile.ubuntu
+            ./toolboxes/mybuntu-toolbox/Containerfile.mybuntu
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ env.IMAGE_TAGS }}
           labels: ${{ steps.meta.outputs.labels }}
