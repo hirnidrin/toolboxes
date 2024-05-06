@@ -59,6 +59,7 @@ pkgconf
 posix-cc-wrappers
 python-3.11
 readline
+starship
 sqlite-libs
 wolfi-baselayout
 xz
