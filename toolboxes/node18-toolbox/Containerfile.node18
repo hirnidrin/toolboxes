@@ -12,19 +12,18 @@ COPY ./toolboxes/node18-toolbox/packages.node18 /toolbox-packages
 #   This breaks eg the 'npx ...' command, as that tries to access /usr/local/lib.
 RUN if [ ! -d /usr/local/lib ]; then mkdir /usr/local/lib; fi
 
-# Temp fix for libexpat1 / expat / git version conflict
-# git now comes preinstalled from wolfi-toolbox and builds on older expat-2.4.9 version ->
-# blocks libexpat1-2.5.x install
-# del git -> removes also expat-2.4.9 -> unblocks libexpat-2.5.x install ->
-# git now reinstalls from packages.node18 using newer libexpat version.
-# Q: expat-2.5.x is not installed now... required anywhere?
-RUN apk del git
-
 # Update image, add additional packages
 RUN apk update && \
     apk upgrade && \
     grep -v '^#' /toolbox-packages | xargs apk add && \
     rm /toolbox-packages
+
+# Install global npm packages, creates:
+#   /usr/lib/node_modules/npm/... -- global npm struct + packages go here
+#   /usr/lib/bin/... -- executable symlinks to related package bins in above path /usr/lib/node_modules/...
+RUN npm i -g vercel && \
+    npm i -g fauna-shell && \
+    rm -rf /root/.npm
 
 # Change root shell to BASH
 RUN sed -i -e '/^root/s/\/bin\/ash/\/bin\/bash/' /etc/passwd
