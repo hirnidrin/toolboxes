@@ -47,6 +47,7 @@ make
 mpc
 mpdecimal
 mpfr
+nano
 ncurses
 ncurses-terminfo-base
 nghttp2
@@ -54,6 +55,7 @@ nodejs-18
 npm
 nss-db
 nss-hesiod
+openssl
 openssl-config
 pkgconf
 posix-cc-wrappers
