@@ -1,4 +1,4 @@
-name: Build and Push Node18 Toolbox Image
+name: node18-toolbox
 on:
   schedule:
     - cron: '0 7 * * *'  # 7:00 every day

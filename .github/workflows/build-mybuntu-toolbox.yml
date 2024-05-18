@@ -1,4 +1,4 @@
-name: Build and Push Mybuntu Toolbox Image
+name: mybuntu-toolbox
 on:
   schedule:
     - cron: '20 7 * * *'  # 7:20 every day - the ublue-os ubuntu-toolbox (which we build on) builds at 22:20
