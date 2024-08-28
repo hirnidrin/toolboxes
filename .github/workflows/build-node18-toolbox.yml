@@ -1,7 +1,7 @@
 name: node18-toolbox
 on:
   schedule:
-    - cron: '0 7 * * *'  # 7:00 every day
+    - cron: '10 4 * * *'  # 4:10 every day
   push:
     branches:
       - main
