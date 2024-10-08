@@ -11,7 +11,6 @@ COPY ./toolboxes/mybuntu-toolbox/packages.mybuntu /toolbox-packages
 
 # Add additional packages
 RUN apt-get update && \
-    yes | /usr/local/sbin/unminimize && \
     DEBIAN_FRONTEND=noninteractive apt-get -y install \
     $(cat toolbox-packages | xargs) && \
     rm -rd /var/lib/apt/lists/* && \
