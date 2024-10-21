@@ -5,7 +5,7 @@ LABEL com.github.containers.toolbox="true" \
       summary="Node.js v20 dev env powered by Wolfi"
 
 # Get list of additional packages to add
-COPY packages.node20 /toolbox-packages
+COPY ./toolboxes/node20-toolbox/packages.node20 /toolbox-packages
 
 # Fix: create missing /usr/local/lib dir.
 #   The upstream wolfi-base image has a symlink /usr/local/lib64 pointing to the nonexistent /usr/local/lib dir.
