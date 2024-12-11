@@ -6,7 +6,7 @@ A clone of [ublue-os toolboxes](https://github.com/ublue-os/toolboxes), with som
 
 ## Notes
 
-1. This repo holds the full code of the upstream repo. I add two toolboxes:
+1. This repo holds the full code of the upstream repo. I add 3 toolboxes:
    * `mybuntu-toolbox` The original ubuntu-toolbox with a few [additional Ubuntu packages](toolboxes/mybuntu-toolbox/packages.mybuntu).
    * `node18-toolbox` My Node.js v18 dev env, similar to the Chainguard node:18-dev image, based on https://wolfi-dev/.
    * `node20-toolbox` My Node.js v20 dev env, similar to the Chainguard node:20-dev image, based on https://wolfi-dev/.
