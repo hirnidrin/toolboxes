@@ -36,10 +36,5 @@ Volume=%t:%t:rslave
 Volume=/etc/hosts:/etc/hosts:ro
 Volume=/etc/resolv.conf:/etc/resolv.conf:ro
 
-[Service]
-ExecStartPre=-/usr/libexec/ptyxis-remove-profile.sh %N
-ExecStartPost=-/usr/libexec/ptyxis-create-profile.sh %N "" "Elio"
-ExecStop=-/usr/libexec/ptyxis-remove-profile.sh %N
-
 [Install]
 WantedBy=default.target
