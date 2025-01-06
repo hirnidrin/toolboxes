@@ -42,6 +42,7 @@ RUN npm i -g vercel && \
     npm i -g fauna-shell && \
     npm i -g nuxi && \
     npm i -g shadcn-vue@latest && \
+    npm i -g npm-check-updates && \
     rm -rf /root/.npm
 
 # Install global node packages -- example using yarn, creates:
