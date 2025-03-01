@@ -99,7 +99,6 @@ jobs:
         if: github.event_name != 'pull_request'
 
       - name: Sign container image
-        uses: sigstore/cosign-installer@v3.8.1
         if: github.event_name != 'pull_request'
         run: |
           echo "${{ env.COSIGN_PRIVATE_KEY }}" > cosign.key
