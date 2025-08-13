@@ -39,7 +39,6 @@ RUN apk update && \
 #       └── package.json
 #   /usr/lib/bin/...                   -- executable symlinks point to related package bins in above tree
 RUN npm i -g vercel && \
-    npm i -g fauna-shell && \
     npm i -g nuxi && \
     npm i -g npm-check-updates && \
     rm -rf /root/.npm
