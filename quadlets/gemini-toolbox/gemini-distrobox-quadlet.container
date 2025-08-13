@@ -1,16 +1,16 @@
 [Unit]
-Description=Node20 toolbox for your distrobox fun
+Description=Google Gemini CLI Toolbox for your distrobox fun
 
 [Container]
 Annotation=run.oci.keep_original_groups=1
 AutoUpdate=registry
-ContainerName=node20-toolbox
+ContainerName=gemini-quadlet
 Environment=SHELL=%s
 Environment=HOME=%h
 Environment=container=podman
 Exec=--verbose --name %u --user %U --group %G --home %h --init "0" --nvidia "1" -- " "
-Image=ghcr.io/hirnidrin/node20-toolbox:latest
-HostName=node20-toolbox.%l
+Image=ghcr.io/hirnidrin/gemini-toolbox:latest
+HostName=gemini-quadlet.%l
 Label=manager=distrobox
 Network=host
 PodmanArgs=--entrypoint /usr/bin/entrypoint
@@ -35,6 +35,3 @@ Volume=/var/home/%u:/var/home/%u:rslave
 Volume=%t:%t:rslave
 Volume=/etc/hosts:/etc/hosts:ro
 Volume=/etc/resolv.conf:/etc/resolv.conf:ro
-
-[Install]
-WantedBy=default.target
