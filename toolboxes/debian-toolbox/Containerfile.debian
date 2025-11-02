@@ -1,4 +1,4 @@
-FROM docker.io/library/debian:bookworm@sha256:731dd1380d6a8d170a695dbeb17fe0eade0e1c29f654cf0a3a07f372191c3f4b
+FROM docker.io/library/debian:trixie@sha256:72547dd722cd005a8c2aa2079af9ca0ee93aad8e589689135feaed60b0a8c08d
 # FROM https://hub.docker.com/_/debian
 
 LABEL com.github.containers.toolbox="true" \
