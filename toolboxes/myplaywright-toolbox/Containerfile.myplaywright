@@ -1,13 +1,13 @@
 FROM ghcr.io/ublue-os/ubuntu-toolbox
 
 LABEL com.github.containers.toolbox="true" \
-    name="playwright-toolbox" \
+    name="myplaywright-toolbox" \
     usage="This image is meant to be used with the Toolbox or Distrobox commands" \
     summary="The original ublue-os ubuntu-toolbox, with additions for playwright on nodejs development." \
     maintainer=""
 
 # Get list of additional packages to add
-COPY ./toolboxes/playwright-toolbox/packages.playwright /toolbox-packages
+COPY ./toolboxes/myplaywright-toolbox/packages.myplaywright /toolbox-packages
 
 # Add additional packages
 RUN apt-get update && \
