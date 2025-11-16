@@ -14,6 +14,6 @@ RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get -y install \
     $(cat toolbox-packages | xargs) && \
     curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash - \
-    sudo apt-get install -y nodejs \
+    apt-get install -y nodejs \
     rm -rd /var/lib/apt/lists/* && \
     rm /toolbox-packages
