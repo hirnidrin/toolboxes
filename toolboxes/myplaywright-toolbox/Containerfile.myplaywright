@@ -31,7 +31,6 @@ RUN npx playwright install-deps chromium
 # see https://github.com/microsoft/playwright/blob/main/utils/docker/Dockerfile.noble
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 RUN mkdir $PLAYWRIGHT_BROWSERS_PATH && \
-    chmod -R 777 $PLAYWRIGHT_BROWSERS_PATH && \
     mkdir "${PLAYWRIGHT_BROWSERS_PATH}-agent" && \
     cd "${PLAYWRIGHT_BROWSERS_PATH}-agent" && npm init -y && \
     npm i -D @playwright/test && \
@@ -41,4 +40,5 @@ RUN rm -rd /var/lib/apt/lists/* && \
     rm /toolbox-packages && \
     rm /nodesource_setup.sh && \
     rm -rf "${PLAYWRIGHT_BROWSERS_PATH}-agent" && \
-    rm -rf /root/.npm
+    rm -rf /root/.npm && \
+    chmod -R 777 $PLAYWRIGHT_BROWSERS_PATH
