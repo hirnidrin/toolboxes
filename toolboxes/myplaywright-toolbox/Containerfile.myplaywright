@@ -3,7 +3,7 @@ FROM ghcr.io/ublue-os/ubuntu-toolbox
 LABEL com.github.containers.toolbox="true" \
     name="myplaywright-toolbox" \
     usage="This image is meant to be used with the Toolbox or Distrobox commands" \
-    summary="The original ublue-os ubuntu-toolbox, with additions for playwright on nodejs development." \
+    summary="The ublue-os ubuntu-toolbox + Node.js 24, Playwright and Chromium." \
     maintainer=""
 
 # Get list of additional packages to add
@@ -12,9 +12,33 @@ COPY ./toolboxes/myplaywright-toolbox/packages.myplaywright /toolbox-packages
 # Add additional packages
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get -y install \
-    $(cat toolbox-packages | xargs) && \
-    curl -fsSL https://deb.nodesource.com/setup_22.x -o nodesource_setup.sh && \
+    $(cat toolbox-packages | xargs)
+# Install Node.js 22.x -- creates:
+#   tree -d -L 1 /usr/lib/node_modules/
+#   /usr/lib/node_modules/
+#   |-- corepack
+#   `-- npm
+#
+#   /usr/bin/...               -- executable symlinks point to related package bins in above tree
+RUN curl -fsSL https://deb.nodesource.com/setup_24.x -o nodesource_setup.sh && \
     bash nodesource_setup.sh && \
-    apt-get install -y nodejs && \
-    rm -rd /var/lib/apt/lists/* && \
-    rm /toolbox-packages
+    apt-get install -y nodejs
+# Install global node packages
+RUN npm i -g npm-check-updates
+# Install Playwright system deps (Ubuntu libraries), without browsers
+RUN npx playwright install-deps chromium
+# Install Playwright browsers into local image
+# see https://github.com/microsoft/playwright/blob/main/utils/docker/Dockerfile.noble
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+RUN mkdir $PLAYWRIGHT_BROWSERS_PATH && \
+    chmod -R 777 $PLAYWRIGHT_BROWSERS_PATH && \
+    mkdir "${PLAYWRIGHT_BROWSERS_PATH}-agent" && \
+    cd "${PLAYWRIGHT_BROWSERS_PATH}-agent" && npm init -y && \
+    npm i -D @playwright/test && \
+    npm exec --no -- playwright-core install chromium
+# Clean up
+RUN rm -rd /var/lib/apt/lists/* && \
+    rm /toolbox-packages && \
+    rm /nodesource_setup.sh && \
+    rm -rf "${PLAYWRIGHT_BROWSERS_PATH}-agent" && \
+    rm -rf /root/.npm
