@@ -1,0 +1,19 @@
+FROM ghcr.io/ublue-os/ubuntu-toolbox
+
+LABEL com.github.containers.toolbox="true" \
+    name="playwright-toolbox" \
+    usage="This image is meant to be used with the Toolbox or Distrobox commands" \
+    summary="The original ublue-os ubuntu-toolbox, with additions for playwright on nodejs development." \
+    maintainer=""
+
+# Get list of additional packages to add
+COPY ./toolboxes/playwright-toolbox/packages.playwright /toolbox-packages
+
+# Add additional packages
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get -y install \
+    $(cat toolbox-packages | xargs) && \
+    curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash - \
+    sudo apt-get install -y nodejs \
+    rm -rd /var/lib/apt/lists/* && \
+    rm /toolbox-packages

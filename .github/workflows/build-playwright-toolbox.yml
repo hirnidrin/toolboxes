@@ -1,7 +1,7 @@
-name: claude-toolbox
+name: playwright-toolbox
 on:
   schedule:
-    - cron: '30 4 * * 4'  # 4:50 every Thursday
+    - cron: '20 4 * * 5'  # 4:20 every Friday - the ublue-os ubuntu-toolbox (which we build on) builds at 22:20
   push:
     branches:
       - main
@@ -9,7 +9,7 @@ on:
       - '**.md'
   workflow_dispatch:
 env:
-    IMAGE_NAME: claude-toolbox
+    IMAGE_NAME: playwright-toolbox
     IMAGE_TAGS: latest
     IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
 
@@ -27,18 +27,19 @@ jobs:
       id-token: write
     strategy:
       fail-fast: false
+      matrix:
+        image_name: ["ubuntu-toolbox"]
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
 
-      - name: Verify base container
-        uses: EyeCantCU/cosign-action/verify@58722a084c82190b57863002d494c91eabbe9e79 # v0.3.0
-        with:
-          containers: wolfi-base
-          cert-identity: https://github.com/chainguard-images/images/.github/workflows/release.yaml@refs/heads/main
-          oidc-issuer: https://token.actions.githubusercontent.com
-          registry: cgr.dev/chainguard
+      # - name: Verify Ubuntu toolbox
+      #   uses: EyeCantCU/cosign-action/verify@v0.2.2
+      #   with:
+      #     containers: ubuntu-toolbox:22.04
+      #     pubkey: https://raw.githubusercontent.com/toolbx-images/images/main/quay.io-toolbx-images.pub
+      #     registry: quay.io/toolbx-images
 
       # Build metadata
       - name: Image Metadata
@@ -56,12 +57,12 @@ jobs:
         uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2
         with:
           containerfiles: |
-            ./toolboxes/claude-toolbox/Containerfile.claude
+            ./toolboxes/playwright-toolbox/Containerfile.playwright
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ env.IMAGE_TAGS }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
-          
+
       # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
       # https://github.com/macbre/push-to-ghcr/issues/12
       - name: Lowercase Registry

@@ -1,7 +1,7 @@
 name: gemini-toolbox
 on:
   schedule:
-    - cron: '30 4 * * *'  # 4:30 every day
+    - cron: '30 4 * * 3'  # 4:30 every Wednesday
   push:
     branches:
       - main

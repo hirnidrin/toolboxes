@@ -1,7 +1,7 @@
 name: node22-toolbox
 on:
   schedule:
-    - cron: '40 4 * * *'  # 4:40 every day
+    - cron: '40 4 * * 2'  # 4:40 every Tuesday
   push:
     branches:
       - main

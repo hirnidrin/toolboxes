@@ -1,7 +1,7 @@
 name: mybuntu-toolbox
 on:
   schedule:
-    - cron: '20 4 * * *'  # 4:20 every day - the ublue-os ubuntu-toolbox (which we build on) builds at 22:20
+    - cron: '20 4 * * 1'  # 4:20 every Monday - the ublue-os ubuntu-toolbox (which we build on) builds at 22:20
   push:
     branches:
       - main
