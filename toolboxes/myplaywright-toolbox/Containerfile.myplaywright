@@ -31,7 +31,7 @@ RUN npm i -g npm-check-updates && \
     npm i -g @anthropic-ai/claude-code
 # Install Playwright system deps (Ubuntu libraries), without browsers
 RUN npx playwright install-deps chromium
-# Install Playwright browsers into local image
+# Install Playwright bundled chromium into local image
 # see https://github.com/microsoft/playwright/blob/main/utils/docker/Dockerfile.noble
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 RUN mkdir $PLAYWRIGHT_BROWSERS_PATH && \
@@ -39,7 +39,9 @@ RUN mkdir $PLAYWRIGHT_BROWSERS_PATH && \
     cd "${PLAYWRIGHT_BROWSERS_PATH}-agent" && npm init -y && \
     npm i -D @playwright/test && \
     npm exec --no -- playwright-core install chromium
-
+# Install Playwright stock Google Chrome into local image at /usr/bin/google-chrome, also
+# installs ffmpeg into /root/.cache, can delete this, we have it already in /ms-playwright
+RUN npx playwright install chrome
 # Clean up
 RUN rm -rd /var/lib/apt/lists/* && \
     rm /toolbox-packages && \
@@ -47,4 +49,5 @@ RUN rm -rd /var/lib/apt/lists/* && \
     rm /nodesource_setup.sh && \
     rm -rf "${PLAYWRIGHT_BROWSERS_PATH}-agent" && \
     rm -rf /root/.npm && \
+    rm -rf /root/.cache && \
     chmod -R 777 $PLAYWRIGHT_BROWSERS_PATH
