@@ -1,12 +1,5 @@
 name: myplaywright-toolbox
 on:
-  schedule:
-    - cron: '20 4 * * 5'  # 4:20 every Friday - the ublue-os ubuntu-toolbox (which we build on) builds at 22:20
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - '**.md'
   workflow_dispatch:
 env:
     IMAGE_NAME: myplaywright-toolbox
