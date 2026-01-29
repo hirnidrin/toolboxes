@@ -1,0 +1,40 @@
+FROM ghcr.io/ublue-os/ubuntu-toolbox
+
+LABEL com.github.containers.toolbox="true" \
+    name="continuous-claude" \
+    usage="This image is meant to be used with the Toolbox or Distrobox commands" \
+    summary="The original ublue-os ubuntu-toolbox, with additions to run https://github.com/parcadei/Continuous-Claude-v3." \
+    maintainer=""
+
+# Get list of additional packages to add
+COPY ./toolboxes/continuous-claude-toolbox/packages.continuous-claude /toolbox-packages
+
+# Add additional packages
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get -y install \
+    $(cat toolbox-packages | xargs)
+# Install Starship
+RUN curl -sS https://starship.rs/install.sh -o install_starship.sh && \
+    sh install_starship.sh -y
+# Add uv binaries directly from https://github.com/astral-sh/uv/releases into system-wide path
+RUN curl --proto '=https' --tlsv1.2 -LsSf https://github.com/astral-sh/uv/releases/download/0.9.28/uv-installer.sh | sh && \
+    mv /root/.local/bin/* /usr/local/bin
+# Install Node.js -- creates:
+#   tree -d -L 1 /usr/lib/node_modules/
+#   /usr/lib/node_modules/
+#   |-- corepack
+#   `-- npm
+#
+#   /usr/bin/...               -- executable symlinks point to related package bins in above tree
+RUN curl -fsSL https://deb.nodesource.com/setup_24.x -o nodesource_setup.sh && \
+    bash nodesource_setup.sh && \
+    apt-get install -y nodejs
+# Install global node packages
+RUN npm i -g npm-check-updates && \
+    npm i -g eslint && \
+    npm i -g typescript && \
+    npm i -g @anthropic-ai/claude-code
+
+# Clean up a bit
+RUN rm -rd /var/lib/apt/lists/* && \
+    rm /toolbox-packages
