@@ -33,6 +33,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_24.x -o nodesource_setup.sh && \
 RUN npm i -g npm-check-updates && \
     npm i -g eslint && \
     npm i -g typescript && \
+    npm i -g pyright && \
     npm i -g @anthropic-ai/claude-code
 
 # Clean up a bit
