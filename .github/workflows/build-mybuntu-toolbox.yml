@@ -8,8 +8,6 @@ on:
     paths:
       - 'toolboxes/mybuntu-toolbox/**'
       - '.github/workflows/build-mybuntu-toolbox.yml'
-    paths-ignore:
-      - '**.md'
   workflow_dispatch:
 env:
     IMAGE_NAME: mybuntu-toolbox
