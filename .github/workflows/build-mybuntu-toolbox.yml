@@ -7,7 +7,7 @@ on:
       - main
     paths:
       - 'toolboxes/mybuntu-toolbox/**'
-      - '.github/workflows/build-mybuntu-toolbox.yml
+      - '.github/workflows/build-mybuntu-toolbox.yml'
     paths-ignore:
       - '**.md'
   workflow_dispatch:
