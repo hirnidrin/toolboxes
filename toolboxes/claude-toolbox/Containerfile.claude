@@ -63,9 +63,12 @@ RUN npx playwright install chrome
 # Install Claude Code
 RUN curl -fsSL https://claude.ai/install.sh  -o install_claude.sh && \
     bash install_claude.sh && \
-    # creates symlink /root/.local/bin/claude -> move it into system path
+    # creates a symlink /root/.local/bin/claude -> /root/.local/bin/claude/versions/x.y.z
+    # move it into system path, and make the target path readable
     mv /root/.local/bin/claude /usr/local/bin && \
+    chmod go+rx /root && \
     # cleanup
+    rm -f install_claude.sh && \
     rm -rf /root/.claude && \
     rm -f /root/.claude.json*
 
