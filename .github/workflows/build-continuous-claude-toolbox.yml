@@ -5,8 +5,9 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - '**.md'
+    paths:
+      - 'toolboxes/continuous-claude/**'
+      - '.github/workflows/build-continuous-claude-toolbox.yml'
   workflow_dispatch:
 env:
     IMAGE_NAME: continuous-claude-toolbox
@@ -25,21 +26,10 @@ jobs:
       contents: read
       packages: write
       id-token: write
-    strategy:
-      fail-fast: false
-      matrix:
-        image_name: ["ubuntu-toolbox"]
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
-
-      # - name: Verify Ubuntu toolbox
-      #   uses: EyeCantCU/cosign-action/verify@v0.2.2
-      #   with:
-      #     containers: ubuntu-toolbox:22.04
-      #     pubkey: https://raw.githubusercontent.com/toolbx-images/images/main/quay.io-toolbx-images.pub
-      #     registry: quay.io/toolbx-images
 
       # Build metadata
       - name: Image Metadata
@@ -49,7 +39,7 @@ jobs:
           images: |
             ${{ env.IMAGE_NAME }}
           labels: |
-            io.artifacthub.package.readme-url=https://raw.githubusercontent.com/ublue-os/boxkit/main/README.md
+            io.artifacthub.package.readme-url=https://github.com/hirnidrin/toolboxes/blob/main/README.md
 
       # Build image using Buildah action
       - name: Build Image
@@ -96,8 +86,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Sign container
-      - uses: sigstore/cosign-installer@d7543c93d881b35a8faa02e8e3605f69b7a1ce62 # v3.10.0
+      # Sign the container
+      - name: Install the cosign tool
+        uses: sigstore/cosign-installer@d7543c93d881b35a8faa02e8e3605f69b7a1ce62 # v3.10.0
         if: github.event_name != 'pull_request'
 
       - name: Sign container image

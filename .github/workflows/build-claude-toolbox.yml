@@ -5,8 +5,9 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - '**.md'
+    paths:
+      - 'toolboxes/claude-toolbox/**'
+      - '.github/workflows/build-claude-toolbox.yml'
   workflow_dispatch:
 env:
     IMAGE_NAME: claude-toolbox
@@ -25,20 +26,10 @@ jobs:
       contents: read
       packages: write
       id-token: write
-    strategy:
-      fail-fast: false
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
-
-      - name: Verify base container
-        uses: EyeCantCU/cosign-action/verify@58722a084c82190b57863002d494c91eabbe9e79 # v0.3.0
-        with:
-          containers: wolfi-base
-          cert-identity: https://github.com/chainguard-images/images/.github/workflows/release.yaml@refs/heads/main
-          oidc-issuer: https://token.actions.githubusercontent.com
-          registry: cgr.dev/chainguard
 
       # Build metadata
       - name: Image Metadata
@@ -48,7 +39,7 @@ jobs:
           images: |
             ${{ env.IMAGE_NAME }}
           labels: |
-            io.artifacthub.package.readme-url=https://raw.githubusercontent.com/ublue-os/boxkit/main/README.md
+            io.artifacthub.package.readme-url=https://github.com/hirnidrin/toolboxes/blob/main/README.md
 
       # Build image using Buildah action
       - name: Build Image
@@ -61,7 +52,7 @@ jobs:
           tags: ${{ env.IMAGE_TAGS }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
-          
+
       # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
       # https://github.com/macbre/push-to-ghcr/issues/12
       - name: Lowercase Registry
@@ -95,8 +86,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Sign container
-      - uses: sigstore/cosign-installer@d7543c93d881b35a8faa02e8e3605f69b7a1ce62 # v3.10.0
+      # Sign the container
+      - name: Install the cosign tool
+        uses: sigstore/cosign-installer@d7543c93d881b35a8faa02e8e3605f69b7a1ce62 # v3.10.0
         if: github.event_name != 'pull_request'
 
       - name: Sign container image
