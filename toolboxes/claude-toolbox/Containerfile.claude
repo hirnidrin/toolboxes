@@ -1,40 +1,76 @@
-FROM ghcr.io/ublue-os/wolfi-toolbox
+FROM ghcr.io/ublue-os/ubuntu-toolbox
 
 LABEL com.github.containers.toolbox="true" \
-      usage="This image is meant to be used with the Toolbox or Distrobox commands" \
-      summary="Claude Code container powered by Wolfi"
+    name="claude-toolbox" \
+    usage="This image is meant to be used with the Toolbox or Distrobox commands." \
+    summary="The ublue-os ubuntu-toolbox, fattened to run dev stuff with Claude." \
+    maintainer=""
 
-# Get list of additional packages to add
-COPY ./toolboxes/claude-toolbox/packages.claude /toolbox-packages
+# Add additional packages
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get -y install \
+        gh \
+        golang \
+        jq yq \
+        python3 python3-pip python-is-python3 pipx && \
+    # Cleanup
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Update image, add additional packages
-RUN apk update && \
-    apk upgrade && \
-    grep -v '^#' /toolbox-packages | xargs apk add && \
-    rm /toolbox-packages
+# Install Starship
+RUN curl -sS https://starship.rs/install.sh -o install_starship.sh && \
+    sh install_starship.sh -y && \
+    rm -f install_starship.sh
 
-# Install global node packages -- example using npm, creates:
-#   tree -a -L 2 /usr/lib/node_modules/
+# Install uv (modern Python package manager)
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
+
+# Install Node.js -- creates:
+#   tree -d -L 1 /usr/lib/node_modules/
 #   /usr/lib/node_modules/
-#   └── npm
-#       ├── LICENSE
-#       ├── bin
-#       ├── dont-check-for-last-version.patch
-#       ├── index.js
-#       ├── lib
-#       ├── man -> ../../../share/man
-#       ├── node_modules               -- the npm packages required for globally installed packages
-#       ├── npmrc                      -- global npm config:
-#           cat /usr/lib/node_modules/npm/npmrc 
-#           # Do not modify this file - use /etc/npmrc instead!
-#           globalconfig=/etc/npmrc
-#           globalignorefile=/etc/npmignore
-#           prefix=/usr/local
-#           python=/usr/bin/python3
-#       └── package.json
-#   /usr/lib/bin/...                   -- executable symlinks point to related package bins in above tree
-RUN npm i -g @anthropic-ai/claude-code && \
-    rm -rf /root/.npm
+#   |-- corepack
+#   `-- npm
+#
+#   /usr/bin/... -- executable symlinks point to related package bins in above tree
+RUN curl -fsSL https://deb.nodesource.com/setup_24.x -o nodesource_setup.sh && \
+    bash nodesource_setup.sh && \
+    apt-get install -y nodejs && \
+    rm -f nodesource_setup.sh
 
-# Change root shell to BASH
-RUN sed -i -e '/^root/s/\/bin\/ash/\/bin\/bash/' /etc/passwd
+# Install global node packages
+RUN npm i -g npm-check-updates && \
+    npm i -g eslint && \
+    npm i -g typescript && \
+    npm i -g pyright
+
+# Install Playwright and Chrome
+# 1. Install system deps (Ubuntu libraries), without browsers
+RUN npx playwright install-deps chromium
+# 2. Install Playwright-bundled chromium into local image
+# see https://github.com/microsoft/playwright/blob/main/utils/docker/Dockerfile.noble
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+RUN mkdir $PLAYWRIGHT_BROWSERS_PATH && \
+    mkdir "${PLAYWRIGHT_BROWSERS_PATH}-agent" && \
+    cd "${PLAYWRIGHT_BROWSERS_PATH}-agent" && npm init -y && \
+    npm i -D @playwright/test && \
+    npm exec --no -- playwright-core install chromium && \
+    rm -rf "${PLAYWRIGHT_BROWSERS_PATH}-agent" && \
+    chmod -R 777 $PLAYWRIGHT_BROWSERS_PATH
+# 3. Install Playwright stock Google Chrome into local image at /usr/bin/google-chrome, also
+# installs ffmpeg into /root/.cache, can delete this, we have it already in /ms-playwright
+RUN npx playwright install chrome
+
+# Install Claude Code
+RUN curl -fsSL https://claude.ai/install.sh  -o install_claude.sh && \
+    bash install_claude.sh && \
+    # creates symlink /root/.local/bin/claude -> move it into system path
+    mv /root/.local/bin/claude /usr/local/bin && \
+    # cleanup
+    rm -rf /root/.claude && \
+    rm -f /root/.claude.json*
+
+# Clean up
+RUN apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /root/.npm && \
+    rm -rf /root/.cache
