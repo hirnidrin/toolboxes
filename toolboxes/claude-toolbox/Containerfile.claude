@@ -39,7 +39,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_24.x -o nodesource_setup.sh && \
     apt-get install -y nodejs && \
     rm -f nodesource_setup.sh
 
-# Install global node packages
+# Install global dev-related node packages
 RUN npm i -g npm-check-updates && \
     npm i -g eslint && \
     npm i -g typescript && \
@@ -73,6 +73,9 @@ RUN curl -fsSL https://claude.ai/install.sh  -o install_claude.sh && \
     rm -f install_claude.sh && \
     rm -rf /root/.claude && \
     rm -f /root/.claude.json*
+
+# Install Gemmini CLI
+RUN npm i -g @google/gemini-cli
 
 # Clean up
 RUN apt-get clean && \
