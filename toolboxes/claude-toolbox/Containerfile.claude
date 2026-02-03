@@ -6,9 +6,11 @@ LABEL com.github.containers.toolbox="true" \
     summary="The ublue-os ubuntu-toolbox, fattened to run dev stuff with Claude." \
     maintainer=""
 
+# Bring base image up-to-date
+RUN apt-get update && apt-get upgrade -y && apt-autoremove -y
+
 # Add additional packages
-RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get -y install \
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install \
         gh \
         golang \
         jq yq \
