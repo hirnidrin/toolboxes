@@ -7,7 +7,7 @@ LABEL com.github.containers.toolbox="true" \
     maintainer=""
 
 # Bring base image up-to-date
-RUN apt-get update && apt-get upgrade -y && apt-autoremove -y
+RUN apt-get update && apt-get upgrade -y && apt autoremove -y
 
 # Add additional packages
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install \
