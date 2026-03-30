@@ -1,4 +1,4 @@
-FROM quay.io/toolbx/arch-toolbox@sha256:9b1583782279e2032ecbb1059a51a531c0454712e4ffbbd7dc31408714f25554 AS arch-toolbox
+FROM quay.io/toolbx/arch-toolbox@sha256:ea0d61bf06b64b4562e2f31ef761cd91b629839b58a114e7861012919fd80540 AS arch-toolbox
 
 LABEL com.github.containers.toolbox="true" \
       usage="This image is meant to be used with the toolbox or distrobox command" \
@@ -72,13 +72,15 @@ RUN pacman -S \
     rm -rf /var/cache/pacman/pkg/*
 
 # Add paru and install AUR packages
+# TODO: switch (back) to paru-bin once a new release is available.
+# See https://github.com/Morganamilo/paru/issues/1454#issuecomment-3663567951
 USER build
 WORKDIR /home/build
-RUN git clone https://aur.archlinux.org/paru-bin.git --single-branch && \
-    cd paru-bin && \
+RUN git clone https://aur.archlinux.org/paru.git --single-branch && \
+    cd paru && \
     makepkg -si --noconfirm && \
     cd .. && \
-    rm -drf paru-bin
+    rm -drf paru
 #    paru -S \
 #        aur/placeholder \
 #        --noconfirm
@@ -86,7 +88,9 @@ USER root
 WORKDIR /
 
 # Cleanup
+# remove rust as it was only installed for building paru
 RUN sed -i 's@#en_US.UTF-8@en_US.UTF-8@g' /etc/locale.gen && \
+    pacman -R rust --noconfirm && \
     userdel -r build && \
     rm -drf /home/build && \
     sed -i '/build ALL=(ALL) NOPASSWD: ALL/d' /etc/sudoers && \

@@ -1,4 +1,5 @@
 # toolboxes
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/ublue-os/toolboxes/badge)](https://scorecard.dev/viewer/?uri=github.com/ublue-os/toolboxes)
 
 A clone of [ublue-os toolboxes](https://github.com/ublue-os/toolboxes), with some additions for me. All credit goes to [team Universal Blue](https://universal-blue.org/) and contributors - my hat's off to you!
 

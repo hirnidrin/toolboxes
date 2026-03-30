@@ -9,6 +9,8 @@ on:
       - 'toolboxes/claude-toolbox/**'
       - '.github/workflows/build-claude-toolbox.yml'
   workflow_dispatch:
+permissions: {}
+
 env:
     IMAGE_NAME: claude-toolbox
     IMAGE_TAGS: latest
@@ -29,17 +31,21 @@ jobs:
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       # Build metadata
       - name: Image Metadata
-        uses: docker/metadata-action@c1e51972afc2121e065aed6d45c65596fe445f3f # v5
+        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
         id: meta
         with:
           images: |
             ${{ env.IMAGE_NAME }}
           labels: |
             io.artifacthub.package.readme-url=https://github.com/hirnidrin/toolboxes/blob/main/README.md
+
+      - name: Compute SOURCE_DATE_EPOCH
+        id: epoch
+        run: echo "epoch=$(date -d '${{ github.event.head_commit.timestamp }}' +%s)" >> $GITHUB_OUTPUT
 
       # Build image using Buildah action
       - name: Build Image
@@ -52,6 +58,9 @@ jobs:
           tags: ${{ env.IMAGE_TAGS }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
+          extra-args: --skip-unused-stages=false
+          build-args: |
+            SOURCE_DATE_EPOCH=${{ steps.epoch.outputs.epoch }}
 
       # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
       # https://github.com/macbre/push-to-ghcr/issues/12
@@ -79,17 +88,18 @@ jobs:
             --compression-format=zstd:chunked
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3
+        uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
         if: github.event_name != 'pull_request'
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Sign the container
-      - name: Install the cosign tool
-        uses: sigstore/cosign-installer@d7543c93d881b35a8faa02e8e3605f69b7a1ce62 # v3.10.0
+      # Sign container
+      - uses: sigstore/cosign-installer@ba7bc0a3fef59531c69a25acd34668d6d3fe6f22 # v4.1.0
         if: github.event_name != 'pull_request'
+        with:
+          cosign-release: "v2.6.1"
 
       - name: Sign container image
         if: github.event_name != 'pull_request'

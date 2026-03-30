@@ -1,6 +1,6 @@
-FROM ghcr.io/ublue-os/arch-toolbox@sha256:9c70f4094b4f317d7dba0dac90d56697ca30035c9549185d6cd12fc616152898 AS bazzite-arch
+FROM ghcr.io/ublue-os/arch-toolbox@sha256:500a0002d0a6a9be93ae1e677a8fa64910b7ed86072d4748dad4b8bcb4066746 AS steambox
 
-COPY ./toolboxes/bazzite-arch/files /
+COPY ./toolboxes/steambox/files /
 
 # Install needed packages
 RUN pacman -Syu \
@@ -84,7 +84,7 @@ RUN sed -i 's@ (Runtime)@@g' /usr/share/applications/steam.desktop && \
         /tmp/* \
         /var/cache/pacman/pkg/*
 
-FROM bazzite-arch as bazzite-arch-gnome
+FROM steambox as steambox-gnome
 
 # Replace KDE portal with GNOME portal, swap included icon theme.
 RUN sed -i 's/-march=native -mtune=native/-march=x86-64 -mtune=generic/g' /etc/makepkg.conf && \
