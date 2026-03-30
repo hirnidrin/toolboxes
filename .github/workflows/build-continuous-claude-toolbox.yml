@@ -1,7 +1,5 @@
 name: continuous-claude-toolbox
 on:
-  schedule:
-    - cron: '20 4 * * 2'  # 4:20 every Tuesday - the ublue-os ubuntu-toolbox (which we build on) builds at 22:20
   push:
     branches:
       - main
